@@ -5,16 +5,25 @@ import Display from './Components/Display';
 import Search from './Components/Search';
 
 function App() {
-  const [city, setCity] = useState('Toronto');
-  const [weatherData, setWeatherData] = useState(null);
-  const [lat, setLat] = useState(43.653225);
-  const [lon, setLon] = useState(-79.383186);
-  const apiKey = '9391234097ce7183eff9a1f843eb7ff8';
-  const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}`;
+  const apiKeyWeather = '9391234097ce7183eff9a1f843eb7ff8';
+  const apiKeyLocation = 'AIzaSyDnAOHUsh2v8HeuHqUiNGvKuz7wOUZauj0';
+  
+  const [tempUnits, setTempUnits] = useState('celsius');
+  function kelvinToCelsius(temp){
+    return Math.round((temp-273)*100)/100;
+  }
+  function kelvinToFahrenheit(temp){
+    return Math.round((kelvinToCelsius(temp)*9/5+32)*100)/100;
+  }
 
+  const [weatherData, setWeatherData] = useState(null);
   useEffect(()=>{
-    if (weatherData === null){getData()}
-  })
+    if (weatherData === null){getData()} //updates display on initial render when weatherdata is retrieved
+    console.log('updated state');
+  }, [weatherData])
+  //update display when refresh is pushed
+
+  const [city, setCity] = useState('Toronto');
   async function getData(){
     const response = await fetch(url);
     const data = await response.json();
@@ -23,22 +32,24 @@ function App() {
     const newWeatherData = {temp: kelvinToCelsius(data.main.temp), 
       feelsLike: kelvinToCelsius(data.main.feels_like), 
       minTemp: kelvinToCelsius(data.main.temp_min), 
-      maxTemp: kelvinToCelsius(data.main.temp_max), 
+      maxTemp: kelvinToCelsius(data.main.temp_max), //need to allow for switching degree units
       conditions: data.weather[0].main, 
-      windSpeed: data.wind.speed, 
+      windSpeed: data.wind.speed, //change to mph later
       windDir: data.wind.deg};
     setWeatherData(newWeatherData);
   }
-  function showDisplay(){
-    return weatherData === null ? <h2>Loading data...</h2> : <Display weather={weatherData} />
-  }
-  function kelvinToCelsius(temp){
-    return Math.round((temp-273)*100)/100;
-  }
-  function kelvinToFahrenheit(temp){
-    return Math.round((kelvinToCelsius(temp)*9/5+32)*100)/100;
-  }
-  function getCity(city){
+
+  const [lat, setLat] = useState(43.653225);
+  const [lon, setLon] = useState(-79.383186);
+  const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKeyWeather}`;
+  
+  const apiKeyGeoParse = '18884401811951570454x58907';
+  const text = 'Toronto';
+  const urlGeo = `https://geocode.xyz/?scantext=${text}&geoit=JSON&auth=${apiKeyGeoParse}`;
+  async function getCity(){
+    const response = await fetch(urlGeo);
+    const data = await response.json();
+    console.log(data);
     //check if city is a valid city
     //return lon and lat of city
     //setLon(newLon) setLat(newLat)
@@ -47,11 +58,11 @@ function App() {
   }
   return (
     <div className="App">
-      <h1>Hello from App</h1>
       <Header city={city} country='Canada' source="OpenWeatherAPI"/>
-      {showDisplay()}
+      <Display weather={weatherData} />
       <Search onSearch={getCity}/>
       <button onClick={getData}>Refresh</button>
+      <button onClick={getCity}>Get city</button>
     </div>
   );
 }

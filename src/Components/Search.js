@@ -1,4 +1,5 @@
 import {useState} from 'react';
+import './Search.css';
 
 function Search(props) {
   const [city, setCity] = useState('Toronto');
@@ -7,7 +8,8 @@ function Search(props) {
     console.log(`searching for ${city}`);
   }
     return (
-      <div className="App">
+      <div className="Search">
+        
         <input type="text" onChange={handleChange} placeholder="Search for a location" defaultValue="Toronto"/>  
         <button onClick={props.onSearch}>Search</button>    
       </div>
