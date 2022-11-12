@@ -1,3 +1,18 @@
 .Header{
-    background-color:rgb(219, 139, 139);
+}
+.city-header{
+    
+    overflow: hidden;
+}
+.header-lower{
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+.city-name{
+    font-size: 3rem;
+}
+.data-source{
+    font-size: 0.75rem;
+    text-align: right;
 }
