@@ -1,9 +1,13 @@
 import "./App.css";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Header from "./Components/Header";
 import Display from "./Components/Display";
 import Search from "./Components/Search";
 import ForecastContainer from "./Components/ForecastContainer";
+
+import { ReactComponent as LeftArrow } from "./assets/leftArrow.svg";
+import { ReactComponent as RightArrow } from "./assets/rightArrow.svg";
+import { UnitContext } from "./contexts/unitContext";
 
 function App() {
   const apiKey = "9391234097ce7183eff9a1f843eb7ff8";
@@ -14,39 +18,29 @@ function App() {
   const [city, setCity] = useState(null);
   const [state, setState] = useState(null);
   const [forecast, setForecast] = useState(null);
+  const [scrollDistance, setScrollDistance] = useState(0);
 
-  const [tempUnits, setTempUnits] = useState("C");
-  function convertTemperatureUnits(temp) {
-    if (tempUnits === "C") {
-      return Math.round(((temp - 32) * 5) / 9);
-    } else if (tempUnits === "F") {
-      return Math.round((temp * 9) / 5 + 32);
-    }
-  }
-  function convertSpeedUnits(speed) {
-    if (tempUnits === "C") {
-      return Math.round(speed*1.6);
-    } else if (tempUnits === "F") {
-      return Math.round(speed / 1.6);
-    }
-  }
+  const {
+    currentUnits,
+    setCurrentUnits,
+    convertTemperatureUnits,
+    convertSpeedUnits,
+  } = useContext(UnitContext);
+
   function changeUnits() {
-    if (tempUnits === "C") {
-      setTempUnits("F");
-    } else if (tempUnits === "F") {
-      setTempUnits("C");
-    }
-    console.log(tempUnits);
+    currentUnits === "C" ? setCurrentUnits("F") : setCurrentUnits("C");
+    console.log(currentUnits);
   }
 
   const [weatherData, setWeatherData] = useState(null);
   useEffect(() => {
+    //updates weather data every 15 min
     if (weatherData === null) {
       getData();
-    } 
+    }
     if (city === null && state === null) {
-      setCity('Toronto');
-      setState('Ontario');
+      setCity("Toronto");
+      setState("Ontario");
     }
     const interval = setInterval(() => {
       getData();
@@ -57,16 +51,14 @@ function App() {
   }, []);
 
   useEffect(() => {
-    setTempUnits("C");
     getData();
   }, [lat, lon]);
   useEffect(() => {
     if (weatherData) {
       setWeatherData(convertWeatherUnits(weatherData));
     }
-  }, [tempUnits]);
+  }, [currentUnits]);
 
-  
   async function getData() {
     getForecast();
     try {
@@ -78,11 +70,11 @@ function App() {
         temp: Math.round(data.main.temp - 273.15),
         feelsLike: Math.round(data.main.feels_like - 273.15),
         minTemp: Math.round(data.main.temp_min - 273.15),
-        maxTemp: Math.round(data.main.temp_max - 273.15),  
+        maxTemp: Math.round(data.main.temp_max - 273.15),
         conditions: data.weather[0].main,
         icon: data.weather[0].icon,
-        windSpeed: data.wind.speed, 
-        windDir: data.wind.deg,  
+        windSpeed: data.wind.speed,
+        windDir: data.wind.deg,
       };
       setWeatherData(retrievedWeatherData);
     } catch (e) {
@@ -94,10 +86,10 @@ function App() {
       temp: convertTemperatureUnits(data.temp),
       feelsLike: convertTemperatureUnits(data.feelsLike),
       minTemp: convertTemperatureUnits(data.minTemp),
-      maxTemp: convertTemperatureUnits(data.maxTemp), 
+      maxTemp: convertTemperatureUnits(data.maxTemp),
       conditions: data.conditions,
       icon: data.icon,
-      windSpeed: convertSpeedUnits(data.windSpeed), 
+      windSpeed: convertSpeedUnits(data.windSpeed),
       windDir: data.windDir,
     };
     return newWeatherData;
@@ -133,17 +125,39 @@ function App() {
       return null;
     }
   }
-  async function getForecast(){
-    try{
+  async function getForecast() {
+    try {
       const response = await fetch(urlForecast);
       const data = await response.json();
       const forecastData = data.list;
       console.log(data);
       setForecast(forecastData);
       return data;
-    } catch(e){
+    } catch (e) {
       console.log(e);
-      return null
+      return null;
+    }
+  }
+
+  function toggleScroll(e) {
+    const direction = e.target.id;
+    const scrollAmount = 250;
+    switch (direction) {
+      case "increase" || "Path_57": //move to right (translate negative)
+        if (scrollDistance > -6150) {
+          const remainingScroll = 6050 + scrollDistance;
+          setScrollDistance(scrollDistance - (remainingScroll > scrollAmount ? scrollAmount: remainingScroll));
+        }
+        break;
+      case "decrease" || "Path_56": //move to left (translate positive)
+        if (scrollDistance < 0) {
+          const remainingScroll = scrollDistance;
+          setScrollDistance(scrollDistance + (remainingScroll < scrollAmount ? scrollAmount: -remainingScroll));
+        }
+
+        break;
+      default:
+        return;
     }
   }
   return (
@@ -151,14 +165,36 @@ function App() {
       <Search onSearch={getCity} changeCity={changeCity} />
 
       <Header city={city} state={state} source="OpenWeatherAPI" />
-      <Display weather={weatherData} units={tempUnits} />
-      <label htmlFor="changeUnits" className="switch" >
-        {/* <label htmlFor="changeUnits">{tempUnits==="C" ? 'Celsius' : 'Fahrenheit'}</label> */}
-        <input type="checkbox" name="changeUnits" id="changeUnits" onChange={changeUnits} />
+      <Display weather={weatherData} units={currentUnits} />
+      <label htmlFor="changeUnits" className="switch">
+        {/* <label htmlFor="changeUnits">{currentUnits==="C" ? 'Celsius' : 'Fahrenheit'}</label> */}
+        <input
+          type="checkbox"
+          name="changeUnits"
+          id="changeUnits"
+          onChange={changeUnits}
+        />
         <span className="slider"></span>
       </label>
-      <button onClick={getForecast}>Forecast</button>
-      <ForecastContainer data={forecast}/>
+      <div className="forecast-container-container">
+        <RightArrow
+          width={"20px"}
+          height={"30px"}
+          className={"arrow"}
+          id="increase"
+          onClick={toggleScroll}
+        />
+        <LeftArrow
+          width={"20px"}
+          height={"30px"}
+          className="arrow"
+          id="decrease"
+          onClick={toggleScroll}
+        />
+        <div className="forecast-container">
+          <ForecastContainer data={forecast} scrollDistance={scrollDistance} />
+        </div>
+      </div>
     </div>
   );
 }

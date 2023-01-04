@@ -11,3 +11,9 @@ border: 1px solid rgba(0,0,0,0.6);
 .wind{
     margin-top: 5px;
 }
+.icon-container{
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

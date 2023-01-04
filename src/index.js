@@ -3,11 +3,17 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import {UnitProvider} from './contexts/unitContext'; 
+import { TimeProvider } from './contexts/timecontext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <UnitProvider>
+      <TimeProvider>
+        <App />
+      </TimeProvider>
+    </UnitProvider>
   </React.StrictMode>
 );
 

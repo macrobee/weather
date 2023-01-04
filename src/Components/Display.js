@@ -36,7 +36,7 @@ function Display(props) {
         </h3>
         
         <h2 className="primary-conditions">{props.weather.conditions}</h2>
-        <img src={`https://openweathermap.org/img/wn/${props.weather.icon}@2x.png`} alt="weather icon" id="image-icon"/>
+        <div className="icon-container"><img src={`https://openweathermap.org/img/wn/${props.weather.icon}@2x.png`} alt="weather icon" id="image-icon"/></div>
         <p className="high-low">
           High: {props.weather.maxTemp}°{props.units} </p>
         <p> Low: {props.weather.minTemp}°{props.units} </p>
