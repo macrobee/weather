@@ -7,7 +7,7 @@ import './ForecastCard.css';
 const ForecastCard = (props) => {
   const { date, time, temp, icon, weather, windSpeed, windDir } = props.data;
 
-  const { currentUnits, convertSpeedUnits, convertfromKelvin } =
+  const { currentUnits, convertSpeedUnits, convertFromKelvin } =
     useContext(UnitContext);
 
   return (
@@ -17,7 +17,7 @@ const ForecastCard = (props) => {
       </div>
       <div>{time}</div>
       <div>
-        {convertfromKelvin(temp)}
+        {convertFromKelvin(temp)}
         °{currentUnits}
       </div>
       <img

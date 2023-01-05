@@ -5,7 +5,7 @@ export const UnitContext = createContext({
   setCurrentUnits: () => null,
   convertTemperatureUnits: () => null,
   convertSpeedUnits: () => null,
-  convertfromKelvin: () => null,
+  convertFromKelvin: () => null,
 });
 
 export const UnitProvider = ({ children }) => {
@@ -18,7 +18,7 @@ export const UnitProvider = ({ children }) => {
       return Math.round((temp * 9) / 5 + 32);
     }
   };
-  const convertfromKelvin = (temp) => {
+  const convertFromKelvin = (temp) => {
     let temperature;
     currentUnits === "C"
       ? (temperature = Math.round(temp - 273.15))
@@ -29,7 +29,7 @@ export const UnitProvider = ({ children }) => {
   const convertSpeedUnits = (speed) => {
     let convertedSpeed;
     currentUnits === "C"
-      ? (convertedSpeed = Math.round(speed * 1.6))
+      ? (convertedSpeed = speed)
       : (convertedSpeed = Math.round(speed / 1.6));
     return convertedSpeed;
   };
@@ -39,7 +39,7 @@ export const UnitProvider = ({ children }) => {
     setCurrentUnits,
     convertTemperatureUnits,
     convertSpeedUnits,
-    convertfromKelvin
+    convertFromKelvin
   };
   return <UnitContext.Provider value={value}>{children}</UnitContext.Provider>;
 };

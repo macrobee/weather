@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useState,useContext } from "react";
+
+import { UnitContext } from "../contexts/unitContext";
 import "./Display.css";
 import { ReactComponent as Arrow } from "./uparrow.svg";
 
 function Display(props) {
   // console.log(props.weather);
+  const {currentUnits, convertFromKelvin, convertSpeedUnits} = useContext(UnitContext);
   function translateWindSpeed(direction) {
     if (direction === 0) {
       return "N";
@@ -29,17 +32,17 @@ function Display(props) {
     return (
       <div className="Display">
         <h2 className="primary-temperature">
-          {props.weather.temp}°{props.units}
+          {convertFromKelvin(props.weather.temp)}°{currentUnits}
         </h2>
         <h3 className="feels-like">
-          Feels like {props.weather.feelsLike}°{props.units}
+          Feels like {convertFromKelvin(props.weather.feelsLike)}°{currentUnits}
         </h3>
         
         <h2 className="primary-conditions">{props.weather.conditions}</h2>
         <div className="icon-container"><img src={`https://openweathermap.org/img/wn/${props.weather.icon}@2x.png`} alt="weather icon" id="image-icon"/></div>
         <p className="high-low">
-          High: {props.weather.maxTemp}°{props.units} </p>
-        <p> Low: {props.weather.minTemp}°{props.units} </p>
+          High: {convertFromKelvin(props.weather.maxTemp)}°{currentUnits} </p>
+        <p> Low: {convertFromKelvin(props.weather.minTemp)}°{currentUnits} </p>
         <div className="wind">
           <p className="wind-text">
             Wind: 
@@ -50,7 +53,7 @@ function Display(props) {
           style={{ transform: `rotate(${180+ props.weather.windDir}deg)` }}
         />
         </div>
-        <p>{props.weather.windSpeed} {props.units === 'C' ? 'km/h ' : 'mph '}
+        <p>{convertSpeedUnits(props.weather.windSpeed)} {currentUnits === 'C' ? 'km/h ' : 'mph '}
             from {translateWindSpeed(props.weather.windDir)}</p>
         {/* {props.weather.windDir}degrees */}
         

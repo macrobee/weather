@@ -23,7 +23,7 @@ function App() {
   const {
     currentUnits,
     setCurrentUnits,
-    convertTemperatureUnits,
+    convertFromKelvin,
     convertSpeedUnits,
   } = useContext(UnitContext);
 
@@ -50,14 +50,14 @@ function App() {
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
+  useEffect(() => {//retrieves new data when location is updated
     getData();
   }, [lat, lon]);
-  useEffect(() => {
-    if (weatherData) {
-      setWeatherData(convertWeatherUnits(weatherData));
-    }
-  }, [currentUnits]);
+  // useEffect(() => { //recalculates weather data when units change
+  //   if (weatherData) {
+  //     setWeatherData(convertWeatherUnits(weatherData));
+  //   }
+  // }, [currentUnits]);
 
   async function getData() {
     getForecast();
@@ -67,10 +67,10 @@ function App() {
       setCity(data.name);
       console.log(data);
       const retrievedWeatherData = {
-        temp: Math.round(data.main.temp - 273.15),
-        feelsLike: Math.round(data.main.feels_like - 273.15),
-        minTemp: Math.round(data.main.temp_min - 273.15),
-        maxTemp: Math.round(data.main.temp_max - 273.15),
+        temp: data.main.temp,
+        feelsLike: data.main.feels_like,
+        minTemp: data.main.temp_min,
+        maxTemp: data.main.temp_max,
         conditions: data.weather[0].main,
         icon: data.weather[0].icon,
         windSpeed: data.wind.speed,
@@ -83,10 +83,10 @@ function App() {
   }
   function convertWeatherUnits(data) {
     const newWeatherData = {
-      temp: convertTemperatureUnits(data.temp),
-      feelsLike: convertTemperatureUnits(data.feelsLike),
-      minTemp: convertTemperatureUnits(data.minTemp),
-      maxTemp: convertTemperatureUnits(data.maxTemp),
+      temp: convertFromKelvin(data.temp),
+      feelsLike: convertFromKelvin(data.feelsLike),
+      minTemp: convertFromKelvin(data.minTemp),
+      maxTemp: convertFromKelvin(data.maxTemp),
       conditions: data.conditions,
       icon: data.icon,
       windSpeed: convertSpeedUnits(data.windSpeed),
@@ -165,7 +165,7 @@ function App() {
       <Search onSearch={getCity} changeCity={changeCity} />
 
       <Header city={city} state={state} source="OpenWeatherAPI" />
-      <Display weather={weatherData} units={currentUnits} />
+      <Display weather={weatherData}/>
       <label htmlFor="changeUnits" className="switch">
         {/* <label htmlFor="changeUnits">{currentUnits==="C" ? 'Celsius' : 'Fahrenheit'}</label> */}
         <input
