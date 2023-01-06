@@ -1,4 +1,5 @@
 import {ForecastContainerDiv} from './ForecastContainer.styles.jsx';
+
 // import Forecast from "./Forecast";
 import ForecastCard from './ForecastCard';
 import uniqid from 'uniqid';
@@ -18,9 +19,11 @@ function ForecastContainer(props) {
         }
     }
     return (
-      <ForecastContainerDiv className="ForecastContainer" scrollDistance={props.scrollDistance}>
-        {props.data ? summarizeForecast() : <p>Forecast cannot be loaded </p>}
-      </ForecastContainerDiv>
+      
+          <ForecastContainerDiv className="ForecastContainer" scrollDistance={props.scrollDistance}>
+            {props.data ? summarizeForecast() : <p>Forecast cannot be loaded </p>}
+          </ForecastContainerDiv>
+        
     );
   }
   

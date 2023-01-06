@@ -26,7 +26,7 @@ const ForecastCard = (props) => {
       />
       <div>{weather}</div>
       <div>
-        {convertSpeedUnits(windSpeed)}
+        Wind: {Math.round(convertSpeedUnits(windSpeed))}
         {currentUnits === "C" ? "km/h" : "mph"}
       </div>
     </div>

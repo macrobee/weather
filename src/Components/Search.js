@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+
 import "./Search.css";
 import Dropdown from "./CityDropdown";
 import { ReactComponent as SearchIcon } from "./search.svg";
@@ -42,18 +44,17 @@ function Search(props) {
           />
           <button type="submit" className="search-button">
             <div className="search-button-div">
-              <SearchIcon width="20px" height="20px" id="search-icon"/>
+              <SearchIcon width="20px" height="20px" id="search-icon" />
             </div>{" "}
           </button>
-          
         </div>
         {showResults && (
-            <Dropdown
-              items={foundCities}
-              changeCity={props.changeCity}
-              hideCities={closeCityList}
-            />
-          )}
+          <Dropdown
+            items={foundCities}
+            changeCity={props.changeCity}
+            hideCities={closeCityList}
+          />
+        )}
       </form>
     </div>
   );

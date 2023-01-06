@@ -1,6 +1,6 @@
 import "./CityDropdown.css";
 import uniqid from "uniqid";
-import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 // accepts array of items, returns unordered list of item location names
 // each item must have 'location' property
 
@@ -33,7 +33,9 @@ function Dropdown(props) {
             state={item.state}
             onClick={setLatLon}
           >
-            {item.location}{item.state ? ", " : null}{item.state}
+            {item.location}
+            {item.state ? ", " : null}
+            {item.state}
           </li>
         );
       });

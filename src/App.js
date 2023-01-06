@@ -1,5 +1,7 @@
 import "./App.css";
 import React, { useState, useEffect, useContext } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+
 import Header from "./Components/Header";
 import Display from "./Components/Display";
 import Search from "./Components/Search";
@@ -50,14 +52,10 @@ function App() {
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {//retrieves new data when location is updated
+  useEffect(() => {
+    //retrieves new data when location is updated
     getData();
   }, [lat, lon]);
-  // useEffect(() => { //recalculates weather data when units change
-  //   if (weatherData) {
-  //     setWeatherData(convertWeatherUnits(weatherData));
-  //   }
-  // }, [currentUnits]);
 
   async function getData() {
     getForecast();
@@ -141,18 +139,24 @@ function App() {
 
   function toggleScroll(e) {
     const direction = e.target.id;
-    const scrollAmount = 250;
+    const scrollAmount = 500;
     switch (direction) {
       case "increase" || "Path_57": //move to right (translate negative)
         if (scrollDistance > -6150) {
           const remainingScroll = 6050 + scrollDistance;
-          setScrollDistance(scrollDistance - (remainingScroll > scrollAmount ? scrollAmount: remainingScroll));
+          setScrollDistance(
+            scrollDistance -
+              (remainingScroll > scrollAmount ? scrollAmount : remainingScroll)
+          );
         }
         break;
       case "decrease" || "Path_56": //move to left (translate positive)
         if (scrollDistance < 0) {
           const remainingScroll = scrollDistance;
-          setScrollDistance(scrollDistance + (remainingScroll < scrollAmount ? scrollAmount: -remainingScroll));
+          setScrollDistance(
+            scrollDistance +
+              (remainingScroll < scrollAmount ? scrollAmount : -remainingScroll)
+          );
         }
 
         break;
@@ -160,12 +164,32 @@ function App() {
         return;
     }
   }
+
+  const appAnimation = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.3,
+      },
+    },
+  };
+  const componentAnimation={
+    hidden:{opacity: 0},
+    show: {opacity: 1}
+  }
   return (
-    <div className="App">
+    <motion.div
+      className="App"
+      variants={appAnimation}
+      initial="hidden"
+      animate="show"
+    >
       <Search onSearch={getCity} changeCity={changeCity} />
 
       <Header city={city} state={state} source="OpenWeatherAPI" />
-      <Display weather={weatherData}/>
+      <Display weather={weatherData} />
       <label htmlFor="changeUnits" className="switch">
         {/* <label htmlFor="changeUnits">{currentUnits==="C" ? 'Celsius' : 'Fahrenheit'}</label> */}
         <input
@@ -176,7 +200,7 @@ function App() {
         />
         <span className="slider"></span>
       </label>
-      <div className="forecast-container-container">
+      <motion.div variants={componentAnimation} className="forecast-container-container">
         <RightArrow
           width={"20px"}
           height={"30px"}
@@ -192,10 +216,21 @@ function App() {
           onClick={toggleScroll}
         />
         <div className="forecast-container">
-          <ForecastContainer data={forecast} scrollDistance={scrollDistance} />
+          <AnimatePresence>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1, x: scrollDistance }}
+              exit={{ opacity: 0 }}
+            >
+              <ForecastContainer
+                data={forecast}
+                scrollDistance={scrollDistance}
+              />
+            </motion.div>
+          </AnimatePresence>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
 

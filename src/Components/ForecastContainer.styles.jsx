@@ -9,5 +9,7 @@ export const ForecastContainerDiv = styled.div`
   width: 100%;
   box-sizing: border-box;
   padding: 10px;
-  transform: translate(${props=>props.scrollDistance}px);
+ 
 `
+
+// transform: translate(${props=>props.scrollDistance}px);
