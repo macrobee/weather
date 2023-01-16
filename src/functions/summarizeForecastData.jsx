@@ -1,8 +1,10 @@
 export const summarizeForecastData = (data) => {
-
+  const dateFormat = {weekday:"short", month: "short", day:"numeric"}
+  
   const forecastList = data.map((dataPoint) => {
+    const date = new Date(dataPoint.dt_txt);
     const info = {
-      date: dataPoint.dt_txt.slice(5, 10),
+      date: date.toLocaleDateString('en-US', dateFormat),
       time: dataPoint.dt_txt.slice(11, 16),
       temp: Math.round(dataPoint.main.temp),
       high: dataPoint.main.temp_max, //take highest temp in date
